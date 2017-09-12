@@ -7,13 +7,41 @@ using UniRx.Triggers;
 public class AttachObject : MonoBehaviour {
 
     [SerializeField] GameObject Target;
+    [SerializeField] AssignType targetPosition;
+    [SerializeField] AssignType targetRotation;
+    [SerializeField] AssignType selfPosition;
+    [SerializeField] AssignType selfRotation;
 
-	void Start ()
+    public enum AssignType
+    {
+        GLOBAL,
+        LOCAL,
+    }
+
+    void Start ()
     {
         this.LateUpdateAsObservable().Subscribe(_ =>
         {
-            transform.localPosition = Target.transform.position;
-            transform.localRotation = Target.transform.rotation;
+            if (Target)
+            {
+                if (selfPosition == AssignType.GLOBAL)
+                {
+                    transform.position = (targetPosition == AssignType.GLOBAL) ? Target.transform.position : Target.transform.localPosition;
+                }
+                else
+                {
+                    transform.localPosition = (targetPosition == AssignType.GLOBAL) ? Target.transform.position : Target.transform.localPosition;
+                }
+
+                if (selfRotation == AssignType.GLOBAL)
+                {
+                    transform.rotation = (targetPosition == AssignType.GLOBAL) ? Target.transform.rotation : Target.transform.localRotation;
+                }
+                else
+                {
+                    transform.localRotation = (targetPosition == AssignType.GLOBAL) ? Target.transform.rotation : Target.transform.localRotation;
+                }
+            }
         });
 	}
 }
